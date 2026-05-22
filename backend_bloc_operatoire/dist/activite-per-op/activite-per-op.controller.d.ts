@@ -1,0 +1,19 @@
+import { ActivitePerOpService } from './activite-per-op.service';
+import { CreateActivitePerOpDto } from './dto/create-activite-per-op.dto';
+import { UpdateActivitePerOpDto } from './dto/update-activite-per-op.dto';
+export declare class ActivitePerOpController {
+    private readonly service;
+    constructor(service: ActivitePerOpService);
+    create(dto: CreateActivitePerOpDto): Promise<import("../entities").ActivitePerOp>;
+    findAll(p?: number, l?: number): Promise<{
+        data: import("../entities").ActivitePerOp[];
+        total: number;
+        page: number;
+        pages: number;
+    }>;
+    findOne(id: string): Promise<import("../entities").ActivitePerOp>;
+    update(id: string, dto: UpdateActivitePerOpDto): Promise<import("../entities").ActivitePerOp>;
+    remove(id: string): Promise<{
+        message: string;
+    }>;
+}

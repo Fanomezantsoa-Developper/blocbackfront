@@ -1,0 +1,88 @@
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.NotificationCPA = exports.StatutNotificationCPA = void 0;
+const typeorm_1 = require("typeorm");
+const patient_entity_1 = require("./patient.entity");
+const medecin_entity_1 = require("./medecin.entity");
+var StatutNotificationCPA;
+(function (StatutNotificationCPA) {
+    StatutNotificationCPA["EN_ATTENTE"] = "EN_ATTENTE";
+    StatutNotificationCPA["RDV_PLANIFIE"] = "RDV_PLANIFIE";
+    StatutNotificationCPA["REALISE"] = "REALISE";
+})(StatutNotificationCPA || (exports.StatutNotificationCPA = StatutNotificationCPA = {}));
+let NotificationCPA = class NotificationCPA {
+    id;
+    heurePrescription;
+    patient;
+    patientId;
+    intervention;
+    chirurgien;
+    chirurgienId;
+    professeurCPA;
+    estUrgent;
+    statut;
+    createdAt;
+    updatedAt;
+};
+exports.NotificationCPA = NotificationCPA;
+__decorate([
+    (0, typeorm_1.PrimaryGeneratedColumn)('uuid'),
+    __metadata("design:type", String)
+], NotificationCPA.prototype, "id", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], NotificationCPA.prototype, "heurePrescription", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => patient_entity_1.Patient, { eager: true }),
+    __metadata("design:type", patient_entity_1.Patient)
+], NotificationCPA.prototype, "patient", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], NotificationCPA.prototype, "patientId", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], NotificationCPA.prototype, "intervention", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => medecin_entity_1.Medecin, { eager: true }),
+    __metadata("design:type", medecin_entity_1.Medecin)
+], NotificationCPA.prototype, "chirurgien", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], NotificationCPA.prototype, "chirurgienId", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], NotificationCPA.prototype, "professeurCPA", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: false }),
+    __metadata("design:type", Boolean)
+], NotificationCPA.prototype, "estUrgent", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'enum', enum: StatutNotificationCPA, default: StatutNotificationCPA.EN_ATTENTE }),
+    __metadata("design:type", String)
+], NotificationCPA.prototype, "statut", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)(),
+    __metadata("design:type", Date)
+], NotificationCPA.prototype, "createdAt", void 0);
+__decorate([
+    (0, typeorm_1.UpdateDateColumn)(),
+    __metadata("design:type", Date)
+], NotificationCPA.prototype, "updatedAt", void 0);
+exports.NotificationCPA = NotificationCPA = __decorate([
+    (0, typeorm_1.Entity)('notifications_cpa')
+], NotificationCPA);
+//# sourceMappingURL=notification-cpa.entity.js.map

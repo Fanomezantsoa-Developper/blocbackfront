@@ -1,0 +1,66 @@
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ConstantePerOp = void 0;
+const typeorm_1 = require("typeorm");
+const activite_per_op_entity_1 = require("./activite-per-op.entity");
+let ConstantePerOp = class ConstantePerOp {
+    id;
+    heure;
+    fc;
+    ta;
+    spo2;
+    temperature;
+    capnie;
+    score;
+    activitePerOp;
+};
+exports.ConstantePerOp = ConstantePerOp;
+__decorate([
+    (0, typeorm_1.PrimaryGeneratedColumn)('uuid'),
+    __metadata("design:type", String)
+], ConstantePerOp.prototype, "id", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], ConstantePerOp.prototype, "heure", void 0);
+__decorate([
+    (0, typeorm_1.Column)('int'),
+    __metadata("design:type", Number)
+], ConstantePerOp.prototype, "fc", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], ConstantePerOp.prototype, "ta", void 0);
+__decorate([
+    (0, typeorm_1.Column)('float'),
+    __metadata("design:type", Number)
+], ConstantePerOp.prototype, "spo2", void 0);
+__decorate([
+    (0, typeorm_1.Column)('float'),
+    __metadata("design:type", Number)
+], ConstantePerOp.prototype, "temperature", void 0);
+__decorate([
+    (0, typeorm_1.Column)('float'),
+    __metadata("design:type", Number)
+], ConstantePerOp.prototype, "capnie", void 0);
+__decorate([
+    (0, typeorm_1.Column)('int'),
+    __metadata("design:type", Number)
+], ConstantePerOp.prototype, "score", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => activite_per_op_entity_1.ActivitePerOp, (activite) => activite.constantes, { onDelete: 'CASCADE' }),
+    __metadata("design:type", activite_per_op_entity_1.ActivitePerOp)
+], ConstantePerOp.prototype, "activitePerOp", void 0);
+exports.ConstantePerOp = ConstantePerOp = __decorate([
+    (0, typeorm_1.Entity)('constantes_per_op')
+], ConstantePerOp);
+//# sourceMappingURL=constante-per-op.entity.js.map
