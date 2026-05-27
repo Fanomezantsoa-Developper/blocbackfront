@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -7,14 +6,6 @@ import { apiClient } from '@/lib/api/client'
 import { patientService } from '@/lib/api'
 
 export default function VisitePreAnesthesiquePage() {
-  return (
-    <Suspense fallback={<div>Chargement...</div>}>
-      <VisitePreAnesthesiquePageContent />
-    </Suspense>
-  );
-  }
-
-function VisitePreAnesthesiquePageContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const patientId = searchParams.get('patientId') || ''
@@ -219,4 +210,4 @@ function VisitePreAnesthesiquePageContent() {
       </div>
     </main>
   )
-  }
+}

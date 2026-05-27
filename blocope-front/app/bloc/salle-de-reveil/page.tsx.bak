@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -13,14 +12,6 @@ const SERVICES_CLINIQUES = [
 ]
 
 export default function SalleDeReveilPage() {
-  return (
-    <Suspense fallback={<div>Chargement...</div>}>
-      <SalleDeReveilPageContent />
-    </Suspense>
-  );
-  }
-
-function SalleDeReveilPageContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const patientId = searchParams.get('patientId') || ''
@@ -258,4 +249,4 @@ function SalleDeReveilPageContent() {
       )}
     </main>
   )
-  }
+}

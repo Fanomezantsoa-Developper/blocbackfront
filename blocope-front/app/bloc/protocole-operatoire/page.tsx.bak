@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 'use client'
 
 import { useState } from 'react'
@@ -6,14 +5,6 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import { apiClient } from '@/lib/api/client'
 
 export default function ProtocoleOperatoirePage() {
-  return (
-    <Suspense fallback={<div>Chargement...</div>}>
-      <ProtocoleOperatoirePageContent />
-    </Suspense>
-  );
-  }
-
-function ProtocoleOperatoirePageContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const patientId = searchParams.get('patientId') || ''
@@ -138,4 +129,4 @@ function ProtocoleOperatoirePageContent() {
       </section>
     </main>
   )
-  }
+}

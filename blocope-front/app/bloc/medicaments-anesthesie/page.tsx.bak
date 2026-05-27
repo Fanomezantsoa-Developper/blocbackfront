@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 'use client'
 
 import { useState } from 'react'
@@ -63,14 +62,6 @@ const CONSOMMABLES = [
 ]
 
 export default function MedicamentsAnesthesiePage() {
-  return (
-    <Suspense fallback={<div>Chargement...</div>}>
-      <MedicamentsAnesthesiePageContent />
-    </Suspense>
-  );
-  }
-
-function MedicamentsAnesthesiePageContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const patientId = searchParams.get('patientId') || ''
@@ -201,4 +192,4 @@ function MedicamentsAnesthesiePageContent() {
       {/* Footer Validation */}
     </main>
   )
-  }
+}
