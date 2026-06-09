@@ -1,8 +1,8 @@
 import { Repository } from 'typeorm';
-import { NotificationCPA } from '../entities/notification-cpa.entity';
+import { WebhookNotification } from '../entities/webhook-notification.entity';
 export declare class WebhookNotificationService {
-    private readonly notificationRepo;
+    private readonly repo;
     private readonly logger;
-    constructor(notificationRepo: Repository<NotificationCPA>);
-    processIncomingNotification(payload: any, sourceService?: string): Promise<boolean>;
+    constructor(repo: Repository<WebhookNotification>);
+    processIncomingNotification(payload: any): Promise<boolean>;
 }

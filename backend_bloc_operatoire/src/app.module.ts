@@ -37,7 +37,7 @@ import { ChecklistApresOpModule } from './checklist-apres-op/checklist-apres-op.
         url: config.get('DATABASE_URL'),
         ssl: { rejectUnauthorized: false },
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: true,
+        synchronize: false,
       }),
     }),
     PatientModule, MedecinModule, CPAModule, VPAModule, BonCommandeModule,

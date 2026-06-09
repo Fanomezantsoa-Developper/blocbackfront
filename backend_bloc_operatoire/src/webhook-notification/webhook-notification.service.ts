@@ -1,36 +1,37 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { NotificationCPA, StatutNotificationCPA } from '../entities/notification-cpa.entity';
+import { WebhookNotification } from '../entities/webhook-notification.entity';
 
 @Injectable()
 export class WebhookNotificationService {
   private readonly logger = new Logger(WebhookNotificationService.name);
 
   constructor(
-    @InjectRepository(NotificationCPA)
-    private readonly notificationRepo: Repository<NotificationCPA>,
+    @InjectRepository(WebhookNotification)
+    private readonly repo: Repository<WebhookNotification>,
   ) {}
 
-  async processIncomingNotification(payload: any, sourceService?: string): Promise<boolean> {
-    this.logger.log(`📦 Webhook reçu: ${JSON.stringify(payload)}`);
-
+  async processIncomingNotification(payload: any): Promise<boolean> {
+    this.logger.log(`📦 Reçu: ${JSON.stringify(payload)}`);
     try {
-      // N'utiliser que les colonnes qui existent DANS L'ENTITÉ
-      const notification = new NotificationCPA();
-      notification.heurePrescription = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-      notification.patientId = payload.patientId || payload.targetId || 'webhook-inconnu';
-      notification.intervention = payload.motif || payload.message || 'Notification externe';
-      notification.chirurgienId = payload.sourceServiceId || payload.chirurgienId || null;
-      notification.professeurCPA = payload.sourceServiceName || sourceService || 'Service externe';
-      notification.estUrgent = payload.urgence === 3 || payload.estUrgent === true;
-      notification.statut = StatutNotificationCPA.EN_ATTENTE;
-
-      await this.notificationRepo.save(notification);
-      this.logger.log(`✅ Notification externe stockée`);
+      const item = this.repo.create({
+        type: payload.type,
+        motif: payload.motif || payload.message,
+        patientId: payload.patientId || payload.targetId,
+        sourceServiceId: payload.sourceServiceId,
+        sourceServiceName: payload.sourceServiceName,
+        targetServiceId: payload.targetServiceId,
+        targetServiceName: payload.targetServiceName,
+        urgence: payload.urgence,
+        payload: payload.payload,
+        channels: payload.channels,
+        processed: true,
+      });
+      await this.repo.save(item);
       return true;
     } catch (error) {
-      this.logger.error(`❌ Erreur: ${error.message}`);
+      this.logger.error(`❌ ${error.message}`);
       return false;
     }
   }

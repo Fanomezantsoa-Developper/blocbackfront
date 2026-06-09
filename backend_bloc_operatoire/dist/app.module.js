@@ -50,7 +50,7 @@ exports.AppModule = AppModule = __decorate([
                     url: config.get('DATABASE_URL'),
                     ssl: { rejectUnauthorized: false },
                     entities: [__dirname + '/**/*.entity{.ts,.js}'],
-                    synchronize: true,
+                    synchronize: false,
                 }),
             }),
             patient_module_1.PatientModule, medecin_module_1.MedecinModule, cpa_module_1.CPAModule, vpa_module_1.VPAModule, bon_commande_module_1.BonCommandeModule,
