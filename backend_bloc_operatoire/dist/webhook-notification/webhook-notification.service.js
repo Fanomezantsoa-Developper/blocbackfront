@@ -27,16 +27,16 @@ let WebhookNotificationService = WebhookNotificationService_1 = class WebhookNot
     async processIncomingNotification(payload, sourceService) {
         this.logger.log(`📦 Webhook reçu: ${JSON.stringify(payload)}`);
         try {
-            const newNotification = new notification_cpa_entity_1.NotificationCPA();
-            newNotification.heurePrescription = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-            newNotification.patientId = payload.patientId || payload.targetId || 'webhook-inconnu';
-            newNotification.intervention = payload.motif || payload.message || 'Notification externe';
-            newNotification.chirurgienId = payload.sourceServiceId || payload.chirurgienId || null;
-            newNotification.professeurCPA = payload.sourceServiceName || sourceService || 'Service externe';
-            newNotification.estUrgent = payload.urgence === 3 || payload.estUrgent === true;
-            newNotification.statut = notification_cpa_entity_1.StatutNotificationCPA.EN_ATTENTE;
-            const saved = await this.notificationRepo.save(newNotification);
-            this.logger.log(`✅ Notification stockée (ID: ${saved.id})`);
+            const notification = new notification_cpa_entity_1.NotificationCPA();
+            notification.heurePrescription = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+            notification.patientId = payload.patientId || payload.targetId || 'webhook-inconnu';
+            notification.intervention = payload.motif || payload.message || 'Notification externe';
+            notification.chirurgienId = payload.sourceServiceId || payload.chirurgienId || null;
+            notification.professeurCPA = payload.sourceServiceName || sourceService || 'Service externe';
+            notification.estUrgent = payload.urgence === 3 || payload.estUrgent === true;
+            notification.statut = notification_cpa_entity_1.StatutNotificationCPA.EN_ATTENTE;
+            await this.notificationRepo.save(notification);
+            this.logger.log(`✅ Notification externe stockée`);
             return true;
         }
         catch (error) {

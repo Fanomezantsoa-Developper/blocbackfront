@@ -1,7 +1,6 @@
 import { Controller, Post, Get, Body, Query, Headers, HttpCode, Logger } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiQuery } from '@nestjs/swagger';
 import { WebhookNotificationService } from './webhook-notification.service';
-import { ReceiveNotificationDto } from './dto/receive-notification.dto';
 
 @ApiTags('WebhookNotification')
 @Controller('webhook-notification')
@@ -11,11 +10,11 @@ export class WebhookNotificationController {
 
   @Post()
   @HttpCode(200)
-  @ApiOperation({ summary: '📨 Recevoir une notification externe (POST) - Format standard' })
-  @ApiBody({ type: ReceiveNotificationDto, description: 'Notification au format standard' })
+  @ApiOperation({ summary: '📨 Recevoir une notification externe' })
+  @ApiBody({ description: 'Notification au format standard' })
   @ApiResponse({ status: 200, description: 'Notification reçue avec succès' })
   async receivePost(
-    @Body() payload: ReceiveNotificationDto,
+    @Body() payload: any,
     @Headers('x-notification-service') source?: string,
   ) {
     const sourceName = source || payload.sourceServiceName || 'service externe';

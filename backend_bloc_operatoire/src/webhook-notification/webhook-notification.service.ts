@@ -16,17 +16,18 @@ export class WebhookNotificationService {
     this.logger.log(`📦 Webhook reçu: ${JSON.stringify(payload)}`);
 
     try {
-      const newNotification = new NotificationCPA();
-      newNotification.heurePrescription = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-      newNotification.patientId = payload.patientId || payload.targetId || 'webhook-inconnu';
-      newNotification.intervention = payload.motif || payload.message || 'Notification externe';
-      newNotification.chirurgienId = payload.sourceServiceId || payload.chirurgienId || null;
-      newNotification.professeurCPA = payload.sourceServiceName || sourceService || 'Service externe';
-      newNotification.estUrgent = payload.urgence === 3 || payload.estUrgent === true;
-      newNotification.statut = StatutNotificationCPA.EN_ATTENTE;
+      // N'utiliser que les colonnes qui existent DANS L'ENTITÉ
+      const notification = new NotificationCPA();
+      notification.heurePrescription = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+      notification.patientId = payload.patientId || payload.targetId || 'webhook-inconnu';
+      notification.intervention = payload.motif || payload.message || 'Notification externe';
+      notification.chirurgienId = payload.sourceServiceId || payload.chirurgienId || null;
+      notification.professeurCPA = payload.sourceServiceName || sourceService || 'Service externe';
+      notification.estUrgent = payload.urgence === 3 || payload.estUrgent === true;
+      notification.statut = StatutNotificationCPA.EN_ATTENTE;
 
-      const saved = await this.notificationRepo.save(newNotification);
-      this.logger.log(`✅ Notification stockée (ID: ${saved.id})`);
+      await this.notificationRepo.save(notification);
+      this.logger.log(`✅ Notification externe stockée`);
       return true;
     } catch (error) {
       this.logger.error(`❌ Erreur: ${error.message}`);

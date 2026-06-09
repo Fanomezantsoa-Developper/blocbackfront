@@ -1,10 +1,9 @@
 import { WebhookNotificationService } from './webhook-notification.service';
-import { ReceiveNotificationDto } from './dto/receive-notification.dto';
 export declare class WebhookNotificationController {
     private readonly service;
     private readonly logger;
     constructor(service: WebhookNotificationService);
-    receivePost(payload: ReceiveNotificationDto, source?: string): Promise<{
+    receivePost(payload: any, source?: string): Promise<{
         received: boolean;
         processed: boolean;
         method: string;
