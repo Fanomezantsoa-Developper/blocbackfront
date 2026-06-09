@@ -27,24 +27,20 @@ let WebhookNotificationService = WebhookNotificationService_1 = class WebhookNot
     async processIncomingNotification(payload, sourceService) {
         this.logger.log(`📦 Webhook reçu: ${JSON.stringify(payload)}`);
         try {
-            const motif = payload.motif || payload.message || 'Notification externe';
-            const patientId = payload.patientId || payload.targetId || 'webhook-inconnu';
-            const urgence = payload.urgence === 3 || payload.estUrgent === true;
-            const newNotification = this.notificationRepo.create({
-                heurePrescription: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-                patientId: patientId,
-                intervention: motif,
-                chirurgienId: payload.sourceServiceId || payload.chirurgienId || null,
-                professeurCPA: payload.sourceServiceName || sourceService || 'Service externe',
-                estUrgent: urgence,
-                statut: notification_cpa_entity_1.StatutNotificationCPA.EN_ATTENTE,
-            });
+            const newNotification = new notification_cpa_entity_1.NotificationCPA();
+            newNotification.heurePrescription = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+            newNotification.patientId = payload.patientId || payload.targetId || 'webhook-inconnu';
+            newNotification.intervention = payload.motif || payload.message || 'Notification externe';
+            newNotification.chirurgienId = payload.sourceServiceId || payload.chirurgienId || null;
+            newNotification.professeurCPA = payload.sourceServiceName || sourceService || 'Service externe';
+            newNotification.estUrgent = payload.urgence === 3 || payload.estUrgent === true;
+            newNotification.statut = notification_cpa_entity_1.StatutNotificationCPA.EN_ATTENTE;
             const saved = await this.notificationRepo.save(newNotification);
-            this.logger.log(`✅ Notification externe stockée (ID: ${saved.id})`);
+            this.logger.log(`✅ Notification stockée (ID: ${saved.id})`);
             return true;
         }
         catch (error) {
-            this.logger.error(`❌ Erreur stockage: ${error.message}`);
+            this.logger.error(`❌ Erreur: ${error.message}`);
             return false;
         }
     }
