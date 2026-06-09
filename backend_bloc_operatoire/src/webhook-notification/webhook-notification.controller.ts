@@ -40,3 +40,4 @@ export class WebhookNotificationController {
     return { received: true, processed: result, method: 'GET', timestamp: new Date().toISOString() };
   }
 }
+// Forced rebuild at Tue, Jun  9, 2026  5:25:43 PM
