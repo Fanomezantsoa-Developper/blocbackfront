@@ -11,8 +11,8 @@ exports.WebhookNotificationService = void 0;
 const common_1 = require("@nestjs/common");
 let WebhookNotificationService = WebhookNotificationService_1 = class WebhookNotificationService {
     logger = new common_1.Logger(WebhookNotificationService_1.name);
-    async processIncomingNotification(payload) {
-        this.logger.log(`📦 Webhook reçu (pas de stockage) : ${JSON.stringify(payload)}`);
+    async processIncomingNotification(payload, sourceService) {
+        this.logger.log(`📦 Webhook reçu de ${sourceService || 'source inconnue'} : ${JSON.stringify(payload)}`);
         return true;
     }
 };

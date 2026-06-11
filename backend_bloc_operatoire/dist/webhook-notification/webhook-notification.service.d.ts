@@ -1,4 +1,4 @@
 export declare class WebhookNotificationService {
     private readonly logger;
-    processIncomingNotification(payload: any): Promise<boolean>;
+    processIncomingNotification(payload: any, sourceService?: string): Promise<boolean>;
 }
