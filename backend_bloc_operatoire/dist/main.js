@@ -46,7 +46,7 @@ async function bootstrap() {
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
         credentials: true,
     });
-    app.setGlobalPrefix('api');
+    app.setGlobalPrefix('bloc/api');
     app.useGlobalPipes(new common_1.ValidationPipe({ whitelist: true, transform: true }));
     const config = new swagger_1.DocumentBuilder()
         .setTitle('CHU Bloc Opératoire API')
@@ -55,7 +55,7 @@ async function bootstrap() {
         .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }, 'JWT-auth')
         .build();
     const document = swagger_1.SwaggerModule.createDocument(app, config);
-    swagger_1.SwaggerModule.setup('api/docs', app, document);
+    swagger_1.SwaggerModule.setup('bloc/api/docs', app, document);
     const port = process.env.PORT || 3000;
     await app.listen(port);
     console.log(`🚀 Backend démarré sur le port ${port}`);

@@ -14,7 +14,9 @@ async function bootstrap() {
     credentials: true,
   });
 
-  app.setGlobalPrefix('api');
+  // ✅ NOUVEAU PRÉFIXE GLOBAL : /bloc/api
+  app.setGlobalPrefix('bloc/api');
+
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
   const config = new DocumentBuilder()
@@ -25,11 +27,11 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
+  // ✅ Swagger accessible à /bloc/api/docs
+  SwaggerModule.setup('bloc/api/docs', app, document);
 
   const port = process.env.PORT || 3000;
   await app.listen(port);
   console.log(`🚀 Backend démarré sur le port ${port}`);
 }
 bootstrap();
- 
