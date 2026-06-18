@@ -18,3 +18,4 @@ export { NotificationCPA, StatutNotificationCPA } from './notification-cpa.entit
 export { CreneauBloc, StatutCreneau, TypeRDV } from './creneau-bloc.entity';
 export { HistoriqueModification } from './historique-modification.entity';
 export { User } from '../user/user.entity';
+export { WebhookNotification } from "./webhook-notification.entity";

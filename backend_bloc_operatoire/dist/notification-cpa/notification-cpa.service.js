@@ -17,26 +17,47 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const notification_cpa_entity_1 = require("../entities/notification-cpa.entity");
+const webhook_notification_entity_1 = require("../entities/webhook-notification.entity");
 let NotificationCPAService = class NotificationCPAService {
-    repo;
-    constructor(repo) {
-        this.repo = repo;
+    notificationRepo;
+    webhookRepo;
+    constructor(notificationRepo, webhookRepo) {
+        this.notificationRepo = notificationRepo;
+        this.webhookRepo = webhookRepo;
     }
     async create(dto) {
-        const saved = await this.repo.save(this.repo.create(dto));
+        const saved = await this.notificationRepo.save(this.notificationRepo.create(dto));
         return Array.isArray(saved) ? saved[0] : saved;
     }
     async findAll(page = 1, limite = 10) {
-        const [data, total] = await this.repo.findAndCount({
+        const [internalData, internalTotal] = await this.notificationRepo.findAndCount({
             relations: ['patient', 'chirurgien'],
             skip: (page - 1) * limite,
             take: limite,
             order: { createdAt: 'DESC' },
         });
-        return { data, total, page, pages: Math.ceil(total / limite) };
+        const externalData = await this.webhookRepo.find({
+            order: { receivedAt: 'DESC' },
+            take: limite,
+        });
+        const merged = [...internalData, ...externalData];
+        merged.sort((a, b) => {
+            const dateA = a.createdAt || a.receivedAt;
+            const dateB = b.createdAt || b.receivedAt;
+            return new Date(dateB).getTime() - new Date(dateA).getTime();
+        });
+        const start = (page - 1) * limite;
+        const end = start + limite;
+        const paginated = merged.slice(start, end);
+        return {
+            data: paginated,
+            total: merged.length,
+            page,
+            pages: Math.ceil(merged.length / limite),
+        };
     }
     async findOne(id) {
-        const n = await this.repo.findOne({ where: { id }, relations: ['patient', 'chirurgien'] });
+        const n = await this.notificationRepo.findOne({ where: { id }, relations: ['patient', 'chirurgien'] });
         if (!n)
             throw new common_1.NotFoundException(`Notification ${id} non trouvée`);
         return n;
@@ -44,25 +65,33 @@ let NotificationCPAService = class NotificationCPAService {
     async planifierRDV(id, dto) {
         const n = await this.findOne(id);
         n.statut = notification_cpa_entity_1.StatutNotificationCPA.RDV_PLANIFIE;
-        return this.repo.save(n);
+        return this.notificationRepo.save(n);
     }
     async update(id, dto) {
         const n = await this.findOne(id);
-        return this.repo.save(Object.assign(n, dto));
+        return this.notificationRepo.save(Object.assign(n, dto));
     }
     async remove(id) {
         await this.findOne(id);
-        await this.repo.delete(id);
+        await this.notificationRepo.delete(id);
         return { message: 'Notification supprimée' };
     }
     async getUnreadCount() {
-        return this.repo.count({ where: { statut: notification_cpa_entity_1.StatutNotificationCPA.EN_ATTENTE } });
+        const internalUnread = await this.notificationRepo.count({
+            where: { statut: notification_cpa_entity_1.StatutNotificationCPA.EN_ATTENTE },
+        });
+        const externalUnread = await this.webhookRepo.count({
+            where: { processed: false },
+        });
+        return internalUnread + externalUnread;
     }
 };
 exports.NotificationCPAService = NotificationCPAService;
 exports.NotificationCPAService = NotificationCPAService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(notification_cpa_entity_1.NotificationCPA)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __param(1, (0, typeorm_1.InjectRepository)(webhook_notification_entity_1.WebhookNotification)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository])
 ], NotificationCPAService);
 //# sourceMappingURL=notification-cpa.service.js.map

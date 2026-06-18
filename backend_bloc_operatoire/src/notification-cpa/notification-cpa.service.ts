@@ -2,30 +2,63 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { NotificationCPA, StatutNotificationCPA } from '../entities/notification-cpa.entity';
+import { WebhookNotification } from '../entities/webhook-notification.entity';
 import { CreateNotificationCPADto } from './dto/create-notification-cpa.dto';
 import { UpdateNotificationCPADto } from './dto/update-notification-cpa.dto';
 
 @Injectable()
 export class NotificationCPAService {
-  constructor(@InjectRepository(NotificationCPA) private repo: Repository<NotificationCPA>) {}
+  constructor(
+    @InjectRepository(NotificationCPA)
+    private readonly notificationRepo: Repository<NotificationCPA>,
+    @InjectRepository(WebhookNotification)
+    private readonly webhookRepo: Repository<WebhookNotification>,
+  ) {}
 
   async create(dto: CreateNotificationCPADto): Promise<NotificationCPA> {
-    const saved = await this.repo.save(this.repo.create(dto));
+    const saved = await this.notificationRepo.save(this.notificationRepo.create(dto));
     return Array.isArray(saved) ? saved[0] : saved;
   }
 
   async findAll(page = 1, limite = 10) {
-    const [data, total] = await this.repo.findAndCount({
+    // 1. Récupérer les notifications internes (CPA)
+    const [internalData, internalTotal] = await this.notificationRepo.findAndCount({
       relations: ['patient', 'chirurgien'],
       skip: (page - 1) * limite,
       take: limite,
       order: { createdAt: 'DESC' },
     });
-    return { data, total, page, pages: Math.ceil(total / limite) };
+
+    // 2. Récupérer les notifications externes (webhook)
+    const externalData = await this.webhookRepo.find({
+      order: { receivedAt: 'DESC' },
+      take: limite,
+    });
+
+    // 3. Fusionner les deux listes
+    const merged = [...internalData, ...externalData];
+    // Trier par date (la plus récente en premier)
+    merged.sort((a, b) => {
+      const dateA = a.createdAt || a.receivedAt;
+      const dateB = b.createdAt || b.receivedAt;
+      return new Date(dateB).getTime() - new Date(dateA).getTime();
+    });
+
+    // 4. Paginer manuellement (simplifié)
+    const start = (page - 1) * limite;
+    const end = start + limite;
+    const paginated = merged.slice(start, end);
+
+    return {
+      data: paginated,
+      total: merged.length,
+      page,
+      pages: Math.ceil(merged.length / limite),
+    };
   }
 
   async findOne(id: string): Promise<NotificationCPA> {
-    const n = await this.repo.findOne({ where: { id }, relations: ['patient', 'chirurgien'] });
+    const n = await this.notificationRepo.findOne({ where: { id }, relations: ['patient', 'chirurgien'] });
     if (!n) throw new NotFoundException(`Notification ${id} non trouvée`);
     return n;
   }
@@ -33,21 +66,28 @@ export class NotificationCPAService {
   async planifierRDV(id: string, dto: any): Promise<NotificationCPA> {
     const n = await this.findOne(id);
     n.statut = StatutNotificationCPA.RDV_PLANIFIE;
-    return this.repo.save(n);
+    return this.notificationRepo.save(n);
   }
 
   async update(id: string, dto: UpdateNotificationCPADto): Promise<NotificationCPA> {
     const n = await this.findOne(id);
-    return this.repo.save(Object.assign(n, dto));
+    return this.notificationRepo.save(Object.assign(n, dto));
   }
 
   async remove(id: string): Promise<{ message: string }> {
     await this.findOne(id);
-    await this.repo.delete(id);
+    await this.notificationRepo.delete(id);
     return { message: 'Notification supprimée' };
   }
 
   async getUnreadCount(): Promise<number> {
-    return this.repo.count({ where: { statut: StatutNotificationCPA.EN_ATTENTE } });
+    // Compter les notifications non lues dans les DEUX tables
+    const internalUnread = await this.notificationRepo.count({
+      where: { statut: StatutNotificationCPA.EN_ATTENTE },
+    });
+    const externalUnread = await this.webhookRepo.count({
+      where: { processed: false },
+    });
+    return internalUnread + externalUnread;
   }
 }
