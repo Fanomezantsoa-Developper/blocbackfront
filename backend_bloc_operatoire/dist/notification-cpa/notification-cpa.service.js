@@ -44,7 +44,6 @@ let NotificationCPAService = class NotificationCPAService {
     async planifierRDV(id, dto) {
         const n = await this.findOne(id);
         n.statut = notification_cpa_entity_1.StatutNotificationCPA.RDV_PLANIFIE;
-        n.heurePrescription = dto.heureRDV || n.heurePrescription;
         return this.repo.save(n);
     }
     async update(id, dto) {
@@ -55,6 +54,9 @@ let NotificationCPAService = class NotificationCPAService {
         await this.findOne(id);
         await this.repo.delete(id);
         return { message: 'Notification supprimée' };
+    }
+    async getUnreadCount() {
+        return this.repo.count({ where: { statut: notification_cpa_entity_1.StatutNotificationCPA.EN_ATTENTE } });
     }
 };
 exports.NotificationCPAService = NotificationCPAService;

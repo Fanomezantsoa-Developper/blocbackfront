@@ -7,6 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
+const notification_cpa_module_1 = require("./notification-cpa/notification-cpa.module");
 const prescription_module_1 = require("./prescription/prescription.module");
 const webhook_notification_module_1 = require("./webhook-notification/webhook-notification.module");
 const common_1 = require("@nestjs/common");
@@ -23,7 +24,6 @@ const activite_per_op_module_1 = require("./activite-per-op/activite-per-op.modu
 const protocole_operatoire_module_1 = require("./protocole-operatoire/protocole-operatoire.module");
 const score_sccre_module_1 = require("./score-sccre/score-sccre.module");
 const sortie_reveil_module_1 = require("./sortie-reveil/sortie-reveil.module");
-const notification_cpa_module_1 = require("./notification-cpa/notification-cpa.module");
 const auth_module_1 = require("./auth/auth.module");
 const archives_module_1 = require("./archives/archives.module");
 const rapports_module_1 = require("./rapports/rapports.module");

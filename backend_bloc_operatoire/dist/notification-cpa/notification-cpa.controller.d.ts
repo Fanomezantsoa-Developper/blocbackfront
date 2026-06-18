@@ -11,6 +11,9 @@ export declare class NotificationCPAController {
         page: number;
         pages: number;
     }>;
+    getUnreadCount(): Promise<{
+        unread: number;
+    }>;
     findOne(id: string): Promise<import("../entities").NotificationCPA>;
     update(id: string, d: UpdateNotificationCPADto): Promise<import("../entities").NotificationCPA>;
     planifier(id: string, dto: any): Promise<import("../entities").NotificationCPA>;

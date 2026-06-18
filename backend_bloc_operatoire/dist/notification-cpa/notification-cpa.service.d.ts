@@ -18,4 +18,5 @@ export declare class NotificationCPAService {
     remove(id: string): Promise<{
         message: string;
     }>;
+    getUnreadCount(): Promise<number>;
 }

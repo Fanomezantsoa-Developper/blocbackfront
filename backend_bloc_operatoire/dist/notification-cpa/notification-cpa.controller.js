@@ -25,11 +25,13 @@ let NotificationCPAController = class NotificationCPAController {
     }
     create(d) { return this.service.create(d); }
     findAll(p, l) { return this.service.findAll(p, l); }
+    async getUnreadCount() {
+        const count = await this.service.getUnreadCount();
+        return { unread: count };
+    }
     findOne(id) { return this.service.findOne(id); }
     update(id, d) { return this.service.update(id, d); }
-    planifier(id, dto) {
-        return this.service.planifierRDV(id, dto);
-    }
+    planifier(id, dto) { return this.service.planifierRDV(id, dto); }
     remove(id) { return this.service.remove(id); }
 };
 exports.NotificationCPAController = NotificationCPAController;
@@ -51,6 +53,13 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], NotificationCPAController.prototype, "findAll", null);
 __decorate([
+    (0, common_1.Get)('unread/count'),
+    (0, swagger_1.ApiOperation)({ summary: 'Nombre de notifications non lues (pour la cloche)' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], NotificationCPAController.prototype, "getUnreadCount", null);
+__decorate([
     (0, common_1.Get)(':id'),
     (0, swagger_1.ApiOperation)({ summary: 'Obtenir une notification' }),
     __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
@@ -69,7 +78,7 @@ __decorate([
 ], NotificationCPAController.prototype, "update", null);
 __decorate([
     (0, common_1.Patch)(':id/planifier'),
-    (0, swagger_1.ApiOperation)({ summary: 'Planifier un RDV pour cette notification' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Planifier un RDV' }),
     __param(0, (0, common_1.Param)('id', common_1.ParseUUIDPipe)),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),

@@ -1,3 +1,4 @@
+import { NotificationCPAModule } from "./notification-cpa/notification-cpa.module";
 import { PrescriptionModule } from "./prescription/prescription.module";
 import { WebhookNotificationModule } from "./webhook-notification/webhook-notification.module";
 import { Module } from '@nestjs/common';

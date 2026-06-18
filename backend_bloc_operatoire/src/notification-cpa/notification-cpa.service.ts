@@ -33,8 +33,6 @@ export class NotificationCPAService {
   async planifierRDV(id: string, dto: any): Promise<NotificationCPA> {
     const n = await this.findOne(id);
     n.statut = StatutNotificationCPA.RDV_PLANIFIE;
-    // Stocker les infos de planification
-    n.heurePrescription = dto.heureRDV || n.heurePrescription;
     return this.repo.save(n);
   }
 
@@ -47,5 +45,9 @@ export class NotificationCPAService {
     await this.findOne(id);
     await this.repo.delete(id);
     return { message: 'Notification supprimée' };
+  }
+
+  async getUnreadCount(): Promise<number> {
+    return this.repo.count({ where: { statut: StatutNotificationCPA.EN_ATTENTE } });
   }
 }
