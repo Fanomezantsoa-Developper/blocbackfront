@@ -6,7 +6,7 @@ export const notificationService = {
     return data;
   },
   async getUnreadCount() {
-    const { data } = await apiClient.get('/notifications-cpa/unread/count');
+    const { data } = await apiClient.get('/webhook-notification/unread/count');
     return data;
   },
 };

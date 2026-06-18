@@ -41,7 +41,7 @@ let WebhookNotificationService = WebhookNotificationService_1 = class WebhookNot
                 processed: true,
             });
             await this.webhookRepo.save(notification);
-            this.logger.log(`✅ Notification stockée dans table dédiée (ID: ${notification.id})`);
+            this.logger.log(`✅ Notification stockée dans webhook_notifications (ID: ${notification.id})`);
             return true;
         }
         catch (error) {
@@ -56,4 +56,9 @@ exports.WebhookNotificationService = WebhookNotificationService = WebhookNotific
     __param(0, (0, typeorm_1.InjectRepository)(webhook_notification_entity_1.WebhookNotification)),
     __metadata("design:paramtypes", [typeorm_2.Repository])
 ], WebhookNotificationService);
+async;
+getUnreadCount();
+Promise < number > {
+    return: this.webhookRepo.count({ where: { processed: false } })
+};
 //# sourceMappingURL=webhook-notification.service.js.map

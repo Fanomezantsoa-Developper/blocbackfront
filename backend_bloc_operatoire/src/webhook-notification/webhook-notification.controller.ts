@@ -1,7 +1,6 @@
-import { Controller, Post, Get, Body, Query, Headers, HttpCode, Logger } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiQuery } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Headers, HttpCode, Logger } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { WebhookNotificationService } from './webhook-notification.service';
-import { ReceiveNotificationDto } from './dto/receive-notification.dto';
 
 @ApiTags('WebhookNotification')
 @Controller('webhook-notification')
@@ -12,7 +11,6 @@ export class WebhookNotificationController {
   @Post()
   @HttpCode(200)
   @ApiOperation({ summary: '📨 Recevoir une notification externe' })
-  @ApiBody({ type: ReceiveNotificationDto })
   @ApiResponse({ status: 200, description: 'Notification reçue avec succès' })
   async receivePost(
     @Body() payload: any,
@@ -24,20 +22,11 @@ export class WebhookNotificationController {
     return { received: true, processed: result, method: 'POST', timestamp: new Date().toISOString() };
   }
 
-  @Get()
-  @ApiOperation({ summary: '🔔 Recevoir une notification externe via GET (legacy)' })
-  @ApiQuery({ name: 'type', required: true })
-  @ApiQuery({ name: 'targetId', required: true })
-  @ApiQuery({ name: 'message', required: true })
-  @ApiQuery({ name: 'source', required: false })
-  async receiveGet(
-    @Query('type') type: string,
-    @Query('targetId') targetId: string,
-    @Query('message') message: string,
-    @Query('source') source?: string,
-  ) {
-    const payload = { type, targetId, message, source };
-    const result = await this.service.processIncomingNotification(payload, source || 'GET');
-    return { received: true, processed: result, method: 'GET', timestamp: new Date().toISOString() };
+  @Get('unread/count')
+  @ApiOperation({ summary: 'Nombre de notifications non lues (pour la cloche)' })
+  async getUnreadCount() {
+    // 🔥 On compte les notifications dans webhook_notifications
+    const count = await this.service.getUnreadCount();
+    return { unread: count };
   }
 }

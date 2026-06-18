@@ -31,7 +31,7 @@ export class WebhookNotificationService {
       });
 
       await this.webhookRepo.save(notification);
-      this.logger.log(`✅ Notification stockée dans table dédiée (ID: ${notification.id})`);
+      this.logger.log(`✅ Notification stockée dans webhook_notifications (ID: ${notification.id})`);
       return true;
     } catch (error) {
       this.logger.error(`❌ Erreur: ${error.message}`);
@@ -39,3 +39,7 @@ export class WebhookNotificationService {
     }
   }
 }
+
+  async getUnreadCount(): Promise<number> {
+    return this.webhookRepo.count({ where: { processed: false } });
+  }

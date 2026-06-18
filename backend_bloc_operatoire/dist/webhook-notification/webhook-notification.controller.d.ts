@@ -9,10 +9,7 @@ export declare class WebhookNotificationController {
         method: string;
         timestamp: string;
     }>;
-    receiveGet(type: string, targetId: string, message: string, source?: string): Promise<{
-        received: boolean;
-        processed: boolean;
-        method: string;
-        timestamp: string;
+    getUnreadCount(): Promise<{
+        unread: any;
     }>;
 }
