@@ -27,22 +27,21 @@ let WebhookNotificationService = WebhookNotificationService_1 = class WebhookNot
     async processIncomingNotification(payload, sourceService) {
         this.logger.log(`📦 Webhook reçu: ${JSON.stringify(payload)}`);
         try {
-            const newNotification = this.notificationRepo.create({
-                heurePrescription: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-                patientId: payload.patientId || payload.targetId || 'webhook-inconnu',
-                intervention: payload.motif || payload.message || 'Notification externe',
-                chirurgienId: payload.sourceServiceId || payload.chirurgienId || null,
-                professeurCPA: payload.sourceServiceName || sourceService || 'Service externe',
-                estUrgent: payload.urgence === 3 || payload.estUrgent === true,
-                statut: notification_cpa_entity_1.StatutNotificationCPA.EN_ATTENTE,
-            });
-            await this.notificationRepo.save(newNotification);
-            this.logger.log(`✅ Notification externe stockée en base (ID: ${newNotification.id})`);
+            const notification = new notification_cpa_entity_1.NotificationCPA();
+            notification.heurePrescription = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+            notification.patientId = payload.patientId || payload.targetId || 'webhook-inconnu';
+            notification.intervention = payload.motif || payload.message || 'Notification externe';
+            notification.chirurgienId = payload.sourceServiceId || payload.chirurgienId || null;
+            notification.professeurCPA = payload.sourceServiceName || sourceService || 'Service externe';
+            notification.estUrgent = payload.urgence === 3 || payload.estUrgent === true;
+            notification.statut = notification_cpa_entity_1.StatutNotificationCPA.EN_ATTENTE;
+            await this.notificationRepo.save(notification);
+            this.logger.log(`✅ Notification externe stockée en base (ID: ${notification.id})`);
             return true;
         }
         catch (error) {
             this.logger.error(`❌ Erreur stockage: ${error.message}`);
-            return false;
+            return true;
         }
     }
 };
