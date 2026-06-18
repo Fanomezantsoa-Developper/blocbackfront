@@ -1,5 +1,5 @@
-import { Controller, Get, Post, Body, Headers, HttpCode, Logger } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Headers, HttpCode, Logger, Param, ParseUUIDPipe } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { WebhookNotificationService } from './webhook-notification.service';
 
 @ApiTags('WebhookNotification')
@@ -23,9 +23,15 @@ export class WebhookNotificationController {
   }
 
   @Get('unread/count')
-  @ApiOperation({ summary: 'Nombre de notifications non lues (pour la cloche)' })
+  @ApiOperation({ summary: 'Nombre de notifications non lues' })
   async getUnreadCount() {
     const count = await this.service.getUnreadCount();
     return { unread: count };
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Obtenir les détails d’une notification par ID' })
+  async getNotification(@Param('id', ParseUUIDPipe) id: string) {
+    return this.service.findOne(id);
   }
 }

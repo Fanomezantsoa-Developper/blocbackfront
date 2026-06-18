@@ -3,35 +3,47 @@
 import { useState, useEffect } from 'react';
 import { notificationService } from '@/lib/api/notification.service';
 import Image from 'next/image';
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
+import NotificationModal from '@/components/bloc/notification-cpa/NotificationModal';
 
 export default function TopBar() {
   const [unreadCount, setUnreadCount] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedNotification, setSelectedNotification] = useState<any>(null);
+  const [notifications, setNotifications] = useState<any[]>([]);
   const pathname = usePathname();
-  const router = useRouter();
 
-  const fetchUnreadCount = async () => {
+  const fetchData = async () => {
     try {
-      const res = await notificationService.getUnreadCount();
-      setUnreadCount(res.unread);
+      // Récupérer le compteur
+      const countRes = await notificationService.getUnreadCount();
+      setUnreadCount(countRes.unread || 0);
+
+      // Récupérer la liste des notifications pour les afficher dans la modale
+      const notifsRes = await notificationService.getAll(1, 50);
+      setNotifications(notifsRes.data || []);
     } catch (err) {
-      console.error('Erreur compteur notifications:', err);
+      console.error('Erreur chargement notifications:', err);
     }
   };
 
   useEffect(() => {
-    fetchUnreadCount();
-    const interval = setInterval(fetchUnreadCount, 10000);
+    fetchData();
+    const interval = setInterval(fetchData, 10000);
     return () => clearInterval(interval);
   }, []);
 
-  // Ne pas afficher le TopBar sur la page de login
   if (pathname === '/login') return null;
 
-  // Fonction pour rediriger vers la page des notifications
   const handleClocheClick = () => {
-    router.push('/bloc/notification-cpa');
+    setIsModalOpen(true);
+    // Sélectionner la première notification non lue par défaut
+    const firstUnread = notifications.find((n: any) => n.processed === false || n.statut === 'EN_ATTENTE');
+    setSelectedNotification(firstUnread || notifications[0] || null);
+  };
+
+  const handleSelectNotification = (notif: any) => {
+    setSelectedNotification(notif);
   };
 
   return (
@@ -47,7 +59,6 @@ export default function TopBar() {
       </div>
 
       <div className="flex items-center gap-6">
-        {/* 🔔 Cloche transformée en bouton cliquable */}
         <button
           onClick={handleClocheClick}
           className="relative p-2 hover:bg-surface-container rounded-full transition-all focus:outline-none focus:ring-2 focus:ring-primary/50"
@@ -61,12 +72,10 @@ export default function TopBar() {
           )}
         </button>
 
-        {/* ⚙️ Paramètres */}
         <button className="p-2 hover:bg-surface-container rounded-full transition-all">
           <span className="material-symbols-outlined text-primary text-xl">settings</span>
         </button>
 
-        {/* 👤 Profil */}
         <div className="flex items-center gap-3 pl-2 border-l border-outline-variant/30">
           <div className="text-right hidden sm:block">
             <p className="text-xs font-bold text-on-surface leading-tight">Dr. A. Durand</p>
@@ -77,6 +86,13 @@ export default function TopBar() {
           </div>
         </div>
       </div>
+
+      {/* Modal de notification */}
+      <NotificationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        notification={selectedNotification}
+      />
     </header>
   );
 }

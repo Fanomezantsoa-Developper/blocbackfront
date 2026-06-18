@@ -27,11 +27,11 @@ export class WebhookNotificationService {
         urgence: payload.urgence,
         payload: payload.payload,
         channels: payload.channels,
-        processed: false, // ✅ initialisé à false pour être compté comme non lu
+        processed: false,
       });
 
       await this.webhookRepo.save(notification);
-      this.logger.log(`✅ Notification stockée dans webhook_notifications (ID: ${notification.id})`);
+      this.logger.log(`✅ Notification stockée (ID: ${notification.id})`);
       return true;
     } catch (error) {
       this.logger.error(`❌ Erreur: ${error.message}`);
@@ -43,3 +43,11 @@ export class WebhookNotificationService {
     return this.webhookRepo.count({ where: { processed: false } });
   }
 }
+
+  async findOne(id: string): Promise<WebhookNotification> {
+    const notification = await this.webhookRepo.findOne({ where: { id } });
+    if (!notification) {
+      throw new Error('Notification non trouvée');
+    }
+    return notification;
+  }
