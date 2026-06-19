@@ -6,7 +6,7 @@ export declare class NotificationCPAController {
     constructor(service: NotificationCPAService);
     create(d: CreateNotificationCPADto): Promise<import("../entities").NotificationCPA>;
     findAll(p?: number, l?: number): Promise<{
-        data: (import("../entities").NotificationCPA | import("../entities/webhook-notification.entity").WebhookNotification)[];
+        data: (import("../entities").NotificationCPA | import("../entities").WebhookNotification)[];
         total: number;
         page: number;
         pages: number;

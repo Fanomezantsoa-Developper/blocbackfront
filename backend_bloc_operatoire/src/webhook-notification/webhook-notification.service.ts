@@ -42,7 +42,6 @@ export class WebhookNotificationService {
   async getUnreadCount(): Promise<number> {
     return this.webhookRepo.count({ where: { processed: false } });
   }
-}
 
   async findOne(id: string): Promise<WebhookNotification> {
     const notification = await this.webhookRepo.findOne({ where: { id } });
@@ -51,3 +50,4 @@ export class WebhookNotificationService {
     }
     return notification;
   }
+}
