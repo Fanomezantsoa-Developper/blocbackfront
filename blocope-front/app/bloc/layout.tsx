@@ -1,18 +1,18 @@
-import Sidebar from "@/components/bloc/layout/Sidebar";
-import TopBar from "@/components/bloc/layout/TopBar";
+'use client';
 
-export default function BlocLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+import { ReactNode } from 'react';
+import Sidebar from '@/components/bloc/layout/Sidebar';
+import TopBar from '@/components/bloc/layout/TopBar';
+
+export default function BlocLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="flex min-h-screen bg-surface">
+    <div className="min-h-screen bg-gray-50">
       <Sidebar />
-      <div className="ml-64 flex-1 flex flex-col min-h-screen">
-        <TopBar />
+      <TopBar />
+      {/* ✅ Ajout d’un padding-top pour éviter que le contenu soit caché sous le TopBar */}
+      <main className="ml-64 pt-20">
         {children}
-      </div>
+      </main>
     </div>
   );
 }

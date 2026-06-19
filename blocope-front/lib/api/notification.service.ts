@@ -1,18 +1,16 @@
-import { apiClient } from './client';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://blocbackfront.onrender.com/bloc/api';
 
 export const notificationService = {
   async getAll(page?: number, limite?: number) {
-    const { data } = await apiClient.get('/notifications-cpa', { params: { page, limite } });
-    return data;
+    const res = await fetch(`${API_URL}/notifications-cpa?page=${page || 1}&limite=${limite || 10}`, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+    return res.json();
   },
-
   async getUnreadCount() {
-    const { data } = await apiClient.get('/webhook-notification/unread/count');
-    return data;
-  },
-
-  async getById(id: string) {
-    const { data } = await apiClient.get(`/webhook-notification/${id}`);
-    return data;
+    const res = await fetch(`${API_URL}/webhook-notification/unread/count`, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+    return res.json();
   },
 };

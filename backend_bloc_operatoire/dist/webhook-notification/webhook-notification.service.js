@@ -52,6 +52,13 @@ let WebhookNotificationService = WebhookNotificationService_1 = class WebhookNot
     async getUnreadCount() {
         return this.webhookRepo.count({ where: { processed: false } });
     }
+    async findOne(id) {
+        const notification = await this.webhookRepo.findOne({ where: { id } });
+        if (!notification) {
+            throw new Error('Notification non trouvée');
+        }
+        return notification;
+    }
 };
 exports.WebhookNotificationService = WebhookNotificationService;
 exports.WebhookNotificationService = WebhookNotificationService = WebhookNotificationService_1 = __decorate([
@@ -59,13 +66,4 @@ exports.WebhookNotificationService = WebhookNotificationService = WebhookNotific
     __param(0, (0, typeorm_1.InjectRepository)(webhook_notification_entity_1.WebhookNotification)),
     __metadata("design:paramtypes", [typeorm_2.Repository])
 ], WebhookNotificationService);
-async;
-findOne(id, string);
-Promise < webhook_notification_entity_1.WebhookNotification > {
-    const: notification = await this.webhookRepo.findOne({ where: { id } }),
-    if(, notification) {
-        throw new Error('Notification non trouvée');
-    },
-    return: notification
-};
 //# sourceMappingURL=webhook-notification.service.js.map

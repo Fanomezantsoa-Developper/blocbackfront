@@ -6,4 +6,5 @@ export declare class WebhookNotificationService {
     constructor(webhookRepo: Repository<WebhookNotification>);
     processIncomingNotification(payload: any, sourceService?: string): Promise<boolean>;
     getUnreadCount(): Promise<number>;
+    findOne(id: string): Promise<WebhookNotification>;
 }

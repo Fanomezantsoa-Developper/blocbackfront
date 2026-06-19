@@ -9,7 +9,7 @@ async function bootstrap() {
 
   app.use(helmet.default());
   app.enableCors({
-    origin: ['http://localhost:3001', 'https://ton-frontend.onrender.com'],
+    origin: ['http://localhost:3000', 'http://localhost:3001', 'https://ton-frontend.onrender.com', 'https://blocbackfront.onrender.com'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });

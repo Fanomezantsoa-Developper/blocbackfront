@@ -12,5 +12,5 @@ export declare class WebhookNotificationController {
     getUnreadCount(): Promise<{
         unread: number;
     }>;
-    getNotification(id: string): Promise<any>;
+    getNotification(id: string): Promise<import("../entities").WebhookNotification>;
 }
