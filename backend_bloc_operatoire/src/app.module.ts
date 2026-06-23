@@ -36,7 +36,7 @@ import { PrescriptionModule } from './prescription/prescription.module';
         url: config.get('DATABASE_URL'),
         ssl: { rejectUnauthorized: false },
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: true,
+        synchronize: false,
       }),
     }),
     PatientModule,
