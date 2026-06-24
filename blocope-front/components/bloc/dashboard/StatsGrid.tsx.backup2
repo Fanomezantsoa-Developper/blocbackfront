@@ -24,7 +24,7 @@ export default function StatsGrid({ stats }: StatsGridProps) {
 
       <div className="bg-white rounded-xl p-5 shadow-sm border border-outline-variant/30 flex items-center gap-4 hover:shadow-md transition-shadow">
         <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-          <span className="material-symbols-outlined text-green-600 text-2xl">local_hospital</span>
+          <span className="material-symbols-outlined text-green-600 text-2xl">surgery</span>
         </div>
         <div>
           <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Opérations</p>
