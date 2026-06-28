@@ -18,9 +18,6 @@ export default function StatsNotification({ stats }: StatsNotificationProps) {
         <span className="text-3xl font-extrabold text-primary font-headline">
           {stats.enAttente}
         </span>
-        <span className="bg-secondary-container text-on-secondary-container text-[10px] px-2 py-0.5 rounded-full font-bold">
-          +2 ce matin
-        </span>
       </div>
 
       <div className="bg-surface-container-lowest p-5 rounded-xl flex flex-col gap-2">

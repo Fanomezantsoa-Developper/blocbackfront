@@ -27,21 +27,6 @@ const navItems: NavItem[] = [
     icon: 'person',
   },
   {
-    label: 'Activité avant opération',
-    href: '/bloc/checklist-oms',
-    icon: 'preliminary',
-  },
-  {
-    label: 'Activité pendant opération',
-    href: '/bloc/activite-pendant-operation',
-    icon: 'medical_services',
-  },
-  {
-    label: 'Après opération',
-    href: '/bloc/apres-operation',
-    icon: 'assignment_turned_in',
-  },
-  {
     label: 'Salle de réveil',
     href: '/bloc/salle-de-reveil',
     icon: 'bed',
@@ -110,13 +95,6 @@ export default function Sidebar() {
 
       {/* Bottom Actions */}
       <div className="mt-auto p-4 border-t border-surface-variant/20 space-y-1">
-        <Link
-          href="/bloc/support"
-          className="flex items-center gap-3 px-4 py-2 text-[#424752] hover:text-primary transition-all group"
-        >
-          <span className="material-symbols-outlined text-[20px]">help</span>
-          <span className="text-xs font-medium">Support</span>
-        </Link>
         <button
           className="w-full flex items-center gap-3 px-4 py-2 text-[#424752] hover:text-error transition-all group"
           onClick={() => console.log("Logout")}

@@ -72,10 +72,6 @@ export default function TopBar() {
           )}
         </button>
 
-        <button className="p-2 hover:bg-surface-container rounded-full transition-all">
-          <span className="material-symbols-outlined text-primary text-xl">settings</span>
-        </button>
-
         <div className="flex items-center gap-3 pl-2 border-l border-outline-variant/30">
           <div className="text-right hidden sm:block">
             <p className="text-xs font-bold text-on-surface leading-tight">Dr. A. Durand</p>

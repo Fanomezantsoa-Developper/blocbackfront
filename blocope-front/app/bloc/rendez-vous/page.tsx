@@ -51,17 +51,17 @@ export default function RendezVousPage() {
       </div>
 
       {/* Tableau */}
-      <div className="bg-white border border-outline-variant/30 rounded-xl overflow-hidden shadow-sm flex flex-col">
+      <div className="bg-white border border-outline-variant/30 rounded-2xl overflow-hidden shadow-sm flex flex-col">
         {/* Tabs */}
         <div className="px-6 pt-4 flex border-b border-outline-variant/10 bg-white">
-          <div className="flex space-x-8">
+          <div className="flex space-x-8 bg-gray-50 p-2 rounded-2xl">
             {[
-              { key: 'tous', label: 'Tous les Rendez-vous' },
-              { key: 'cpa', label: 'Patients pour CPA' },
-              { key: 'vpa', label: 'Patients pour VPA' },
+              { key: 'tous', label: ' 📋 Tous les Rendez-vous' },
+              { key: 'cpa', label: ' 👨‍⚕️ Patients pour CPA' },
+              { key: 'vpa', label: ' 🩺 Patients pour VPA' },
             ].map(tab => (
               <button key={tab.key} onClick={() => setActiveTab(tab.key as any)}
-                className={`pb-4 px-1 text-sm font-bold transition-colors ${
+                className={`pb-4 px-1 rounded-2xl bg-blue-100  text-lg font-bold transition-colors ${
                   activeTab === tab.key ? 'text-primary border-b-2 border-primary' : 'text-on-surface-variant hover:text-primary'
                 }`}>
                 {tab.label}
@@ -72,7 +72,7 @@ export default function RendezVousPage() {
 
         {/* Barre recherche */}
         <div className="px-6 py-3 flex items-center justify-between border-b border-outline-variant/20 bg-surface-container-lowest">
-          <h3 className="font-headline font-extrabold text-on-surface text-sm">Interventions Planifiées</h3>
+          <h3 className="font-headline font-extrabold text-on-surface text-lg">Interventions Planifiées</h3>
           <div className="flex gap-2">
             <div className="relative">
               <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-on-surface-variant">
