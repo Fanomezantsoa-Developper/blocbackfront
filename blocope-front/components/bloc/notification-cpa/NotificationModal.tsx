@@ -1,13 +1,25 @@
 'use client';
 
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+
 interface NotificationModalProps {
   isOpen: boolean;
   onClose: () => void;
-  notification: any;
+  notifications: any[];
+  onMarkAsRead?: (notificationId: string) => void; // Callback pour marquer comme lue
 }
 
-export default function NotificationModal({ isOpen, onClose, notification }: NotificationModalProps) {
-  if (!isOpen || !notification) return null;
+export default function NotificationModal({
+  isOpen,
+  onClose,
+  notifications,
+  onMarkAsRead
+}: NotificationModalProps) {
+  const router = useRouter();
+  const [readNotifications, setReadNotifications] = useState<Set<string>>(new Set());
+
+  if (!isOpen || !notifications || notifications.length === 0) return null;
 
   const getUrgenceColor = (urgence: number) => {
     if (urgence === 3) return 'bg-red-100 text-red-800 border-red-300';
@@ -23,14 +35,34 @@ export default function NotificationModal({ isOpen, onClose, notification }: Not
     return '⚪ Normal';
   };
 
+  const handleVoirPrescription = (notification: any) => {
+    // Marquer comme lue
+    if (notification.id && !readNotifications.has(notification.id)) {
+      const newRead = new Set(readNotifications);
+      newRead.add(notification.id);
+      setReadNotifications(newRead);
+      if (onMarkAsRead) {
+        onMarkAsRead(notification.id);
+      }
+    }
+
+    if (notification.patientId) {
+      router.push(`/bloc/dossier-patient/${notification.patientId}`);
+    }
+  };
+
+  const allRead = notifications.every(n => readNotifications.has(n.id));
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-fadeIn">
       <div className="relative w-full max-w-2xl mx-4 bg-white rounded-2xl shadow-2xl overflow-hidden border border-primary/10">
-        {/* En-tête avec dégradé */}
+        {/* En-tête */}
         <div className="bg-gradient-to-r from-primary to-primary-dark px-6 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
             <span className="text-2xl">🔔</span>
-            <h3 className="text-white font-bold text-xl">Nouvelle notification</h3>
+            <h3 className="text-white font-bold text-xl">
+              Notifications ({notifications.filter(n => !readNotifications.has(n.id)).length} non lues)
+            </h3>
           </div>
           <button
             onClick={onClose}
@@ -40,76 +72,99 @@ export default function NotificationModal({ isOpen, onClose, notification }: Not
           </button>
         </div>
 
-        {/* Corps */}
-        <div className="p-6 space-y-5 max-h-[70vh] overflow-y-auto">
-          {/* Type et urgence */}
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <span className="px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-bold">
-              {notification.type || 'Notification'}
-            </span>
-            <span className={`px-4 py-1.5 rounded-full text-sm font-bold border ${getUrgenceColor(notification.urgence)}`}>
-              {getUrgenceLabel(notification.urgence)}
-            </span>
+        {/* Statut "Toutes lues" */}
+        {allRead && notifications.length > 0 && (
+          <div className="bg-green-100 border-b border-green-300 px-6 py-3 flex items-center gap-2">
+            <span className="text-green-600 text-lg">✅</span>
+            <p className="text-green-800 font-bold text-sm">
+              Toutes les notifications sont lues
+            </p>
           </div>
+        )}
 
-          {/* Motif */}
-          <div>
-            <p className="text-lg font-semibold text-gray-800">{notification.motif || notification.message}</p>
-          </div>
-
-          {/* Grille d’informations */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
-            <div>
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-wide">Patient</p>
-              <p className="text-sm font-medium text-gray-800">{notification.patientId || 'Inconnu'}</p>
-            </div>
-            <div>
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-wide">Reçue le</p>
-              <p className="text-sm font-medium text-gray-800">
-                {notification.receivedAt
-                  ? new Date(notification.receivedAt).toLocaleString('fr-FR', {
-                      day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
-                    })
-                  : 'N/A'}
-              </p>
-            </div>
-          </div>
-
-          {/* Services source / cible */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-blue-50 p-3 rounded-xl border border-blue-100">
-              <p className="text-xs font-bold text-blue-600 uppercase tracking-wide">Service source</p>
-              <p className="font-medium text-gray-800">{notification.sourceServiceName || notification.sourceServiceId || 'N/A'}</p>
-            </div>
-            <div className="bg-green-50 p-3 rounded-xl border border-green-100">
-              <p className="text-xs font-bold text-green-600 uppercase tracking-wide">Service cible</p>
-              <p className="font-medium text-gray-800">{notification.targetServiceName || notification.targetServiceId || 'N/A'}</p>
-            </div>
-          </div>
-
-          {/* Canaux */}
-          {notification.channels && notification.channels.length > 0 && (
-            <div>
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Canaux de diffusion</p>
-              <div className="flex flex-wrap gap-2">
-                {notification.channels.map((ch: string) => (
-                  <span key={ch} className="px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-xs font-medium">
-                    {ch}
+        {/* Liste des notifications */}
+        <div className="p-4 max-h-[70vh] overflow-y-auto space-y-4">
+          {notifications.map((notification, index) => {
+            const isRead = readNotifications.has(notification.id);
+            return (
+              <div
+                key={notification.id || index}
+                className={`bg-white border rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow ${
+                  isRead ? 'border-green-300 bg-green-50/50' : 'border-gray-200'
+                }`}
+              >
+                {/* En-tête de la carte : Type + Urgence + Statut lu */}
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                  <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold">
+                    {notification.type || 'Notification'}
                   </span>
-                ))}
-              </div>
-            </div>
-          )}
+                  <div className="flex items-center gap-2">
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold border ${getUrgenceColor(notification.urgence)}`}>
+                      {getUrgenceLabel(notification.urgence)}
+                    </span>
+                    {isRead && (
+                      <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold">
+                        ✓ Lu
+                      </span>
+                    )}
+                  </div>
+                </div>
 
-          {/* Payload (si présent) */}
-          {notification.payload && (
-            <div>
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">Données associées</p>
-              <pre className="bg-gray-100 p-3 rounded-lg text-xs font-mono text-gray-700 overflow-x-auto border border-gray-200">
-                {JSON.stringify(notification.payload, null, 2)}
-              </pre>
-            </div>
-          )}
+                {/* Motif */}
+                <p className="text-sm font-semibold text-gray-800 mb-3">
+                  {notification.motif || notification.message || 'Aucun motif'}
+                </p>
+
+                {/* Grille d'informations */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 bg-gray-50 p-3 rounded-lg border border-gray-100 mb-3">
+                  <div>
+                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">Patient</p>
+                    <p className="text-sm font-medium text-gray-800">
+                      {notification.patientNom || notification.patientId || 'Inconnu'}
+                    </p>
+                    {notification.patientId && (
+                      <p className="text-xs text-gray-500 font-mono">{notification.patientId}</p>
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">Reçue le</p>
+                    <p className="text-sm font-medium text-gray-800">
+                      {notification.receivedAt
+                        ? new Date(notification.receivedAt).toLocaleString('fr-FR', {
+                            day: '2-digit',
+                            month: 'short',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })
+                        : 'N/A'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Service source (uniquement) */}
+                <div className="mb-3">
+                  <p className="text-[10px] font-bold text-blue-600 uppercase tracking-wide">Service source</p>
+                  <p className="text-sm font-medium text-gray-800">
+                    {notification.sourceServiceName || notification.sourceServiceId || 'N/A'}
+                  </p>
+                </div>
+
+                {/* Bouton Voir prescription (jaune) */}
+                <button
+                  onClick={() => handleVoirPrescription(notification)}
+                  className={`w-full py-2 rounded-lg text-sm font-bold transition-all flex items-center justify-center gap-2 ${
+                    isRead
+                      ? 'bg-green-300 hover:bg-green-400 text-gray-700'
+                      : 'bg-yellow-400 hover:bg-yellow-500 text-gray-800'
+                  }`}
+                >
+                  <span className="text-lg">📋</span>
+                  {isRead ? 'Déjà lu' : 'Voir prescription'}
+                </button>
+              </div>
+            );
+          })}
         </div>
 
         {/* Pied de page */}

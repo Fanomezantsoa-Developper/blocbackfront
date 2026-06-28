@@ -46,12 +46,6 @@ export default function ModalPlanifierRDV({
                 }`}>
                 CPA (Consultation Pré-Anesthésique)
               </button>
-              <button onClick={() => setTypeRDV('VPA')}
-                className={`flex-1 py-2 rounded-lg text-sm font-bold border transition-all ${
-                  typeRDV === 'VPA' ? 'bg-green-100 border-green-500 text-green-700' : 'border-gray-300 text-gray-600 hover:bg-gray-50'
-                }`}>
-                VPA (Visite Pré-Anesthésique)
-              </button>
             </div>
           </div>
 
@@ -78,7 +72,7 @@ export default function ModalPlanifierRDV({
 
           {/* Professeur */}
           <div>
-            <label className="text-xs font-bold text-gray-600 block mb-1">Professeur Responsable *</label>
+            <label className="text-xs font-bold text-gray-600 block mb-1"> Responsable *</label>
             <input type="text" value={professeur} onChange={e => setProfesseur(e.target.value)}
               className="w-full border rounded-lg p-2 text-sm" required />
           </div>
@@ -93,7 +87,7 @@ export default function ModalPlanifierRDV({
         <div className="flex justify-end gap-3 mt-6">
           <button onClick={onClose} className="px-6 py-2 border rounded-lg text-sm font-bold hover:bg-gray-100">Annuler</button>
           <button onClick={handleSubmit} className="px-6 py-2 bg-blue-700 text-white rounded-lg text-sm font-bold hover:bg-blue-800">
-            {estUrgent ? '⚡ Fixer Immédiatement' : 'Valider le RDV'}
+            {estUrgent ? '⚡ Fixer Immédiatement' : 'Valider '}
           </button>
         </div>
       </div>

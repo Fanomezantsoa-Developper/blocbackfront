@@ -9,7 +9,6 @@ import NotificationModal from '@/components/bloc/notification-cpa/NotificationMo
 export default function TopBar() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedNotification, setSelectedNotification] = useState<any>(null);
   const [notifications, setNotifications] = useState<any[]>([]);
   const pathname = usePathname();
 
@@ -19,7 +18,7 @@ export default function TopBar() {
       const countRes = await notificationService.getUnreadCount();
       setUnreadCount(countRes.unread || 0);
 
-      // Récupérer la liste des notifications pour les afficher dans la modale
+      // Récupérer la liste des notifications
       const notifsRes = await notificationService.getAll(1, 50);
       setNotifications(notifsRes.data || []);
     } catch (err) {
@@ -37,13 +36,6 @@ export default function TopBar() {
 
   const handleClocheClick = () => {
     setIsModalOpen(true);
-    // Sélectionner la première notification non lue par défaut
-    const firstUnread = notifications.find((n: any) => n.processed === false || n.statut === 'EN_ATTENTE');
-    setSelectedNotification(firstUnread || notifications[0] || null);
-  };
-
-  const handleSelectNotification = (notif: any) => {
-    setSelectedNotification(notif);
   };
 
   return (
@@ -72,6 +64,11 @@ export default function TopBar() {
           )}
         </button>
 
+        {/* Supprimer l'icône paramètres si tu veux */}
+        {/* <button className="p-2 hover:bg-surface-container rounded-full transition-all">
+          <span className="material-symbols-outlined text-primary text-xl">settings</span>
+        </button> */}
+
         <div className="flex items-center gap-3 pl-2 border-l border-outline-variant/30">
           <div className="text-right hidden sm:block">
             <p className="text-xs font-bold text-on-surface leading-tight">Dr. A. Durand</p>
@@ -87,7 +84,7 @@ export default function TopBar() {
       <NotificationModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        notification={selectedNotification}
+        notifications={notifications}
       />
     </header>
   );
